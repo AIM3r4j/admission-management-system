@@ -1,0 +1,107 @@
+<%- include('./partials/navbar-admin.ejs') %>
+<title>Exam Settings</title>
+</head>
+<body>
+  <% if(feedback.length > 0){ %>
+    <div class="toast text-white bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+      <div class="d-flex">
+        <div class="toast-body">
+          <strong><%= feedback %></strong>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+      </div>
+  <% } %>
+<div class="row m-2">
+  <div class="col-sm-5 m-auto p-2 table-responsive" style="border: 2px solid gray; border-radius: 5%;">
+    <h5>Assigned Exam Details:</h5>
+  <% if(examInfo != null){ %>
+    <table class="table table-info table-bordered" style=" width: auto;">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Exam Name</th>
+            <th scope="col">Schedule</th>
+            <th scope="col">Duration (Minute)</th>
+            <th scope="col">Required GPA</th>
+            <th scope="col">Remove?</th>
+          </tr>
+        </thead>
+        <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td><%= examInfo.name %></td>
+                <td><%= examInfo.schedule %></td>
+                <td><%= examInfo.durationInMinute %></td>
+                <td><%= examInfo.requirements.gpa %></td>
+                <td><a href="/exam-info/delete/<%= examInfo._id %>"><i class="bi bi-trash-fill"></i></a></td>
+              </tr>
+        </tbody>
+    </table>
+    <% } else { %>
+      <h6>No exams assigned yet!</h6>
+      <hr>
+      <div class="container" style="margin-left: 0; width: fit-content; height: fit-content;">
+        <h5>Please assign an exam:</h5>
+        <form class="form-control" action="/exam-info" method="post" style="background-color: lightblue;">
+            <input class="form-control mb-3" type="text" id="name" placeholder="Exam Name" name="name" required>
+            <label for="schedule">Exam Date and Time</label>
+            <input class="form-control mb-3" type="datetime-local" id="schedule" placeholder="Exam Schedule" name="schedule" required>
+            <input class="form-control mb-3" type="number" id="duration" placeholder="Exam Duration (Minute)" name="duration" required>
+            <input class="form-control mb-3" type="number" id="gpa" placeholder="Required GPA" name="gpa" min="1"
+            max="5"
+            step=".01" required>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-success">Assign Exam</button>
+            </div>
+        </form>
+      </div>
+    <% } %>
+  </div>
+  <div class="col-sm-5 m-auto p-2 table-responsive" style="border: 2px solid gray; border-radius: 5%; width: fit-content;">
+    <h5>Examiners Assigned:</h5>
+    <% if(examiners.length>0){ %>
+      <table class="table table-info table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Username</th>
+              <th scope="col">Email address</th>
+              <th scope="col">Remove?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% let i = 1 %>
+        <% examiners.forEach((examiner) =>{ %>
+                <tr>
+                  <th scope="row"><%= i++ %></th>
+                  <td><%= examiner.username %></td>
+                  <td><%= examiner.email %></td>
+                  <td><a href="/exam-settings/delete/<%= examiner.username%>"><i class="bi bi-trash-fill"></i></a></td>
+                </tr>  
+        <% }) %>
+          </tbody>
+      </table>
+      <% } else { %>
+          <h6>No one assigned yet!</h6>
+      <% } %>
+      <hr>
+      <div class="container" style="margin-left: 0; width: fit-content; height: fit-content;">
+          <h5>Please assign an examiner:</h5>
+          <form class="form-control" action="/exam-settings" method="post" style="background-color: lightblue;">
+              <input type="email" class="form-control mb-3" id="email" placeholder="Email address" name="email" required>
+              <div class="input-group mb-3">
+                  <div class="input-group-text">@</div>
+                  <input type="text" class="form-control" id="username" placeholder="Username" name="username" required>
+              </div>
+              <input type="password" class="form-control mb-3" id="password" placeholder="Password" name="password" required>
+              <div class="mb-3">
+                  <button type="submit" class="btn btn-success">Assign Examiner</button>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
+</body>
+<%- include('./partials/footer.ejs') %>
+</html>

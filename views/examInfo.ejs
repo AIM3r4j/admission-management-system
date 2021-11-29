@@ -1,0 +1,33 @@
+<%- include('./partials/navbar-student.ejs') %>
+<title>Exam Details</title>
+</head>
+<body>
+    <% if(details != {} && details != null){ %>
+        <div class="container examInfo m-auto">
+          <table class="table table-info table-bordered" style="width: fit-content;">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Exam Name</th>
+                <th scope="col">Schedule (Exam Starts At)</th>
+                <th scope="col">Duration (Minute)</th>
+              </tr>
+            </thead>
+            <% let i=1 %>
+            <tbody>
+                  <tr>
+                    <th scope="row"><%= i++ %></th>
+                    <td><%= details.name %></td>
+                    <td><%= details.schedule %></td>
+                    <td><%= details.durationInMinute %></td>
+                  </tr>  
+            </tbody>
+        </table>
+        </div>
+    <% } else { %>
+        <div class="no-exam m-2 p-2" style="text-align: center; background-color: coral;">
+          <h4>No exams scheduled yet.</h4>
+        </div>
+    <% } %>
+
+<%- include('./partials/footer.ejs') %>

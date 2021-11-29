@@ -1,0 +1,12 @@
+<%- include('./partials/navbar-student.ejs') %>
+<title>Exam</title>
+</head>
+<body>
+    <div class="confirmation p-2" style="text-align: center; background-color: darkseagreen;">
+        <h3>Do you want to end your exam?</h3>
+        <form action="/exam/end" method="post">
+            <button class="btn btn-success" type="submit" name="endConfirmed" value="yes">Yes</button>
+            <button class="btn btn-danger" type="submit" name="endConfirmed" value="no">No</button>
+        </form>
+    </div>
+<%- include('./partials/footer.ejs') %>

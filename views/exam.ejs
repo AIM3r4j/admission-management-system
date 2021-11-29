@@ -1,0 +1,81 @@
+<%- include('./partials/navbar-student.ejs') %>
+<title>Exam</title>
+</head>
+<body>
+    <% if(message.length > 0){ %>
+        <div
+        class="toast text-white bg-success border-0 fade show"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+        data-bs-autohide="false"
+      >
+        <div class="d-flex justify-content-end align-items-end">
+          <div class="toast-body">
+            <strong><%= message %></strong>
+          </div>
+          <button
+            type="button"
+            class="btn-close btn-close-white m-auto"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+      </div>
+    <% } %>
+    <% if(questions == "noExamYet"){ %>
+      <div class="result m-2 p-2" style="text-align: center; background-color: rgb(255, 246, 126);">
+        <h3>Exam is not posted yet.</h3>
+    </div>
+    <% } else if(questions.length > 0){ %>
+        <div class="questions">
+            <div class="row m-auto p-2" style="background-color: rgb(253, 141, 66); position: sticky; top: 0%;">
+                <div class="col-sm-10"><h2>Questions:</h2></div>
+                <div class="col-sm-2"><a href="/exam/end"><button class="btn btn-danger" >End Exam</button></a></div>
+            </div>
+            <% let i=1 %>
+            <% questions.forEach((question) => { %>
+                <div class="question p-3" style="background-color: rgb(125, 168, 179);">
+                    <form class="form-control" action="/exam/submit" method="post">
+                        <div class="row m-1 p-1">
+                          <div class="col-sm-8 p-1"><h4><%= i++ %>. <%= question.questionText %></h4></div>
+                          <div class="col-sm-4 p-1"><b>Marks: <%= question.mark%></b></div>
+                        </div>
+                        <div class="options m-1 p-2">
+                            <div class="form-check" style="border: 2px solid lightgray; padding-left: 30px; margin: 10px">
+                                <input class="form-check-input" style="width: 22px; height: 22px; cursor: pointer;" type="radio" name="answer<%= question.quesNo %>" id="q<%= question.quesNo %>option1" value="<%= question.option1 %>" checked>
+                                <label class="form-check-label p-1" for="q<%= question.quesNo %>option1" style="width: 100%; cursor: pointer;">
+                                  <strong><%= question.option1 %></strong>
+                                </label>
+                              </div>
+                              <div class="form-check" style="border: 2px solid lightgray; padding-left: 30px; margin: 10px">
+                                <input class="form-check-input" style="width: 22px; height: 22px; cursor: pointer;" type="radio" name="answer<%= question.quesNo %>" id="q<%= question.quesNo %>option2" value="<%= question.option2 %>">
+                                <label class="form-check-label p-1" for="q<%= question.quesNo %>option2" style="width: 100%; cursor: pointer; padding-left: 20px;">
+                                    <strong><%= question.option2 %></strong>
+                                </label>
+                              </div>
+                              <div class="form-check" style="border: 2px solid lightgray; padding-left: 30px; margin: 10px">
+                                <input class="form-check-input" style="width: 22px; height: 22px; cursor: pointer;" type="radio" name="answer<%= question.quesNo %>" id="q<%= question.quesNo %>option3" value="<%= question.option3 %>">
+                                <label class="form-check-label p-1" for="q<%= question.quesNo %>option3" style="width: 100%; cursor: pointer; padding-left: 20px;">
+                                    <strong><%= question.option3 %></strong>
+                                </label>
+                              </div>
+                              <div class="form-check" style="border: 2px solid lightgray; padding-left: 30px; margin: 10px">
+                                <input class="form-check-input" style="width: 22px; height: 22px; cursor: pointer;" type="radio" name="answer<%= question.quesNo %>" id="q<%= question.quesNo %>option4" value="<%= question.option4 %>">
+                                <label class="form-check-label p-1" for="q<%= question.quesNo %>option4" style="width: 100%; cursor: pointer; padding-left: 20px;">
+                                    <strong><%= question.option4 %></strong>
+                                </label>
+                              </div>
+                        </div>
+                          <div class="answerSubmit m-3 p-1">
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                          </div>
+                    </form>
+                </div>
+            <% }) %>
+        </div>
+        <% } else { %>
+        <h4>No questions set.</h4>
+        <% } %>
+        
+<%- include('./partials/footer.ejs') %>

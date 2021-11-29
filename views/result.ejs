@@ -1,0 +1,98 @@
+<% if(role=="admin"){ %>
+    <!-- If the user is an admin -->
+    <%- include('./partials/navbar-admin.ejs') %>
+    <title>Result</title>
+    </head>
+    <body>
+        <% if(result == "notGenerated"){ %>
+            <div class="result-form">
+                <form class="form-control m-auto" action="/result/generate" method="post" style="width: fit-content;">
+                    <h5>Generate Result:</h5>
+                    <label for="passingMark">Specify the minimum passing mark:</label>
+                    <input class="form-control mb-3" type="number" name="passingMark" id="passingMark">
+                    <label for="limit">Specify available slots for admission:</label>
+                    <input class="form-control mb-3" type="number" name="limit" id="limit">
+                    <button class="btn btn-success m-1" type="submit">Confirm & Generate Result</button>
+                </form>
+            </div>
+        <% } else if(result == null){ %>
+            <div class="result m-2 p-2" style="text-align: center; background-color: rgb(255, 246, 126);">
+                <h3>It is not the appropriate time yet</h3>
+            </div>
+        <% } else if(result == "generated") { %>
+            <div class="result-generated">
+                <table class="table table-info table-bordered m-auto" style="width: fit-content;">
+                    <h5 style="text-align: center;">Students eligible to get admitted:</h5>
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Student username</th>
+                        <th scope="col">Result</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    <% let i = 1 %>
+                    <% results.forEach((result) =>{ %>
+                        <tr>
+                            <th scope="row"><%= i++ %></th>
+                            <td><%= result.username %></td>
+                            <td>Passed</td>
+                        </tr>
+                    <% }) %>
+                    </tbody>
+                </table>
+                <hr>
+                <form class="form-control m-auto" action="/result/publish" method="post" style="width: fit-content;">
+                    <h4>Publish Result:</h4>
+                    <label for="admissionDeadline">Specify last date of admission:</label>
+                    <input class="form-control mb-3" type="date" name="admissionDeadline" id="admissionDeadline">
+                    <button class="btn btn-success" type="submit">Publish Result</button>
+                </form>
+            </div>
+        <% } else if(result == "published") { %>
+            <div class="result m-2 p-2" style="text-align: center; background-color: rgb(255, 246, 126);">
+                <h3>Result has been published!</h3>
+            </div>
+        <% } %>
+    </body>
+<% } else if(role=="student"){ %>
+    <!-- If the user is a student -->
+    <%- include('./partials/navbar-student.ejs') %>
+    <title>Result</title>
+    </head>
+    <body>
+        <div class="result">
+            <% if(result == "noExamYet"){ %>
+                <div class="result m-2 p-2" style="text-align: center; background-color: rgb(255, 246, 126);">
+                    <h3>Exam is not posted yet.</h3>
+                </div>
+            <% } else if(result == "published" && passed == true){ %>
+                <div class="result m-2 p-2" style="text-align: center; background-color: rgb(107, 236, 107);">
+                    <h3>Congratulations!!!</h3>
+                    <h4>You passed the exam and are now eligible to get admitted</h4>
+                    <hr>
+                    <h4>Last date to get admitted: <%= deadline %></h4>
+                    <% if(timesUp == false){ %>
+                        <a href="/admission"><button class="btn btn-success m-3">Get Admitted</button></a>
+                    <% } %>
+                </div>
+            <% }else if(result == "published" && passed == false){ %>
+                <div class="result m-2 p-2" style="text-align: center; background-color: rgb(255, 126, 126);">
+                    <h4>Sorry! You did not pass the exam unfortunately.</h4>
+                    <h4>Let's try our best the next time!</h4>
+                </div>
+            <% }else if(result == "published" && passed == null){ %>
+                <div class="result m-2 p-2" style="text-align: center; background-color: rgb(255, 126, 126);">
+                    <h4>You did not apply for the exam.</h4>
+                </div>
+            <% } else { %>
+                <div class="result m-2 p-2" style="text-align: center; background-color: rgb(255, 246, 126);">
+                    <h3>Result is not published yet.</h3>
+                </div>
+            <% } %>
+        </div>
+    </body>
+<% } %>
+
+<%- include('./partials/footer.ejs') %>
+</html>

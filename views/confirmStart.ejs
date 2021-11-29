@@ -1,0 +1,19 @@
+<%- include('./partials/navbar-student.ejs') %>
+<title>Exam</title>
+</head>
+<body>
+    <% if(message != null){ %>
+        <div class="not-available" style="text-align: center; background-color: rgb(255, 246, 126);">
+            <h3>Exam will be available from <%= message %></h3>
+        </div>
+    <% } else { %>
+    <div class="confirmation p-2" style="text-align: center; background-color: darkseagreen;">
+        <h3>Do you want to start your exam?</h3>
+        <form action="/exam/start" method="post">
+            <button class="btn btn-success" type="submit" name="startConfirmed" value="yes">Yes</button>
+            <button class="btn btn-danger" type="submit" name="startConfirmed" value="no">No</button>
+        </form>
+    </div>
+    <% } %>
+
+<%- include('./partials/footer.ejs') %>

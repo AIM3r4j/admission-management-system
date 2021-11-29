@@ -1,0 +1,116 @@
+<%- include('./partials/navbar-examiner.ejs') %>
+<title>Exam Questions</title>
+</head>
+<body>
+    <% if(message.length > 0){ %>
+        <div
+      class="toast text-white bg-success border-0 fade show"
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+      data-bs-autohide="false"
+    >
+      <div class="d-flex justify-content-end align-items-end">
+        <div class="toast-body">
+          <strong><%= message %></strong>
+        </div>
+        <button
+          type="button"
+          class="btn-close btn-close-white me-2 m-auto"
+          data-bs-dismiss="toast"
+          aria-label="Close"
+        ></button>
+      </div>
+    </div>
+    <% } %>
+    <% if(questions == null){ %>
+      <div class="result m-2 p-2" style="text-align: center; background-color: coral;;">
+        <h4>No exams posted yet.</h4>
+    </div>
+    <% } else if(questions != null){ %>
+      <div class="questions-added">
+        <div class="row m-auto" style="background-color: darkcyan;">
+            <div class="col-10"><h3>Set up questions for the exam:</h3></div>
+            <div class="col-2 p-1"><a href="/exam-question/finish"><button class="btn btn-danger" >Finish Setting  Questions</button></a></div>
+        </div>
+        <div class="row m-auto">
+          <div class="col-8">
+            <h5>Questions Added:</h5>
+            <% if(questions.length > 0){ %>
+              <table class="table table-info table-bordered m-auto" style="width: fit-content;">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Question Text</th>
+                      <th scope="col">Option-1</th>
+                      <th scope="col">Option-2</th>
+                      <th scope="col">Option-3</th>
+                      <th scope="col">Option-4</th>
+                      <th scope="col">Correct Answer</th>
+                      <th scope="col">Allocated Mark</th>
+                      <th scope="col">Remove?</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                <% questions.forEach((question) =>{ %>
+                        <tr>
+                          <th scope="row"><%= question.quesNo %></th>
+                          <td><%= question.questionText %></td>
+                          <td><%= question.option1 %></td>
+                          <td><%= question.option2 %></td>
+                          <td><%= question.option3 %></td>
+                          <td><%= question.option4 %></td>
+                          <td><%= question.correctAnswer %></td>
+                          <td><%= question.mark %></td>
+                          <td><a href="/exam-question/delete/<%= question.quesNo %>"><i class="bi bi-trash-fill"></i></a></td>
+                        </tr>  
+                <% }) %>
+                  </tbody>
+              </table>
+            <% } else {%>
+              <div class="result m-2 p-2" style="text-align: center; background-color: coral;;">
+                <h4>No questions set yet.</h4>
+            </div>
+            <% } %>
+            
+          </div>
+          <div class="col-4">
+            <div class="question-form m-auto" style="width: fit-content;">
+              <h5>Add a question:</h5>
+              <form class="form-control" action="/exam-question" method="POST">
+                  <label for="quesNo">Question No.:</label>
+                  <input class="form-control" type="number" id="quesNo" name="quesNo" value="<%= questions[questions.length-1].quesNo+1 %>" required readonly>
+                  <label for="questionText">Question Text:</label>
+                  <input class="form-control" type="text" id="questionText" name="questionText" required>
+                  <label for="option1">Option-1:</label>
+                  <input class="form-control" type="text" id="option1" name="option1" required>
+                  <label for="option2">Option-2:</label>
+                  <input class="form-control" type="text" id="option2" name="option2" required>
+                  <label for="option3">Option-3:</label>
+                  <input class="form-control" type="text" id="option3" name="option3" required>
+                  <label for="option4">Option-4:</label>
+                  <input class="form-control" type="text" id="option4" name="option4" required>
+                  <label for="correctOption">Correct Option:</label>
+                  <select  class="form-control form-select" name="correctOption" id="correctOption" required>
+                      <option value="">Choose the correct option</option>
+                      <option value="1">Option-1</option>
+                      <option value="2">Option-2</option>
+                      <option value="3">Option-3</option>
+                      <option value="4">Option-4</option>
+                  </select>
+                  <label for="mark">Allocated mark:</label>
+                  <input class="form-control mb-3" type="number" id="mark" name="mark" required>
+                  <button class="form-control btn btn-success" type="submit">Confirm & Add</button>
+              </form>
+          </div>
+          </div>
+        </div>
+    </div>
+    <% } else {%>
+      <div class="result m-2 p-2" style="text-align: center; background-color: rgb(255, 246, 126);">
+        <h3>The questions have been set for the exam</h3>
+    </div>
+    <%}%>
+</body>
+<%- include('./partials/footer.ejs') %>
+</html>

@@ -1,0 +1,44 @@
+<%- include('./partials/navbar-student.ejs') %>
+<title>Application</title>
+</head>
+<body>
+    <div class="application m-2 p-2" style="background-color: rgb(160, 193, 255);">
+        <% if(feedback == "noExamYet"){ %>
+
+            <h3>No Exam posted yet</h3>
+
+        <% } else if(feedback == "applied"){ %>
+
+            <h3>You have applied for the test</h3>
+
+        <% } else if(feedback == "timesUp"){ %>
+
+            <h3>Application Window is now closed.</h3>
+            <br>
+            <h3>Please return to the <a href="/">homepage</a></h3>
+
+        <% } else if(feedback == "non-applicable"){ %>
+
+            <h3>Application requirements are not fulfilled</h3>
+            <h4>Requirements: Minimum GPA must be <%= requirements%></h4>
+            <br>
+            <h3>Sorry! You are not eligible to apply.</h3>
+            <br>
+            <h3>Please return to the <a href="/">homepage</a></h3>
+
+        <% } else if(feedback == "applicable"){ %>
+
+            <form class="form-control m-1" action="/application" method="post">
+                
+                <h4>Requirements: Minimum GPA must be <%= requirements%></h4>
+                <br>
+                <h3>You are eligible to apply. Requirements are fulfilled.</h3>
+                <br>
+                <h3>Last date for application: <%= deadline%></h3>
+                <h3> Confirm your registration for the exam by clicking the button</h3>
+                <button class="btn btn-success" type="submit" name="username" value="<%= username %>">Confirm & Apply</button>
+            </form>
+            
+        <% } %>
+    </div>
+<%- include('./partials/footer.ejs') %>

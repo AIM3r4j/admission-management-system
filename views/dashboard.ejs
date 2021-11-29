@@ -1,0 +1,41 @@
+<% if(role=="examiner"){ %>
+<!-- If the user is an examiner -->
+<%- include('./partials/navbar-examiner.ejs') %>
+<title>Dashboard</title>
+</head>
+<body>
+    <div class="dashboard container m-auto">
+        <h4>Welcome to the Examiner Dashboard</h4>
+        <h6>You can set the questions for the assigned exam by navigating to the "Exam Questions" page on the navigationbar or click <a href="/exam-question">here</a>.</h6>
+    </div>
+ 
+<% } else if(role=="student"){ %>
+<!-- If the user is a student -->
+<%- include('./partials/navbar-student.ejs') %>
+<title>Dashboard</title>
+</head>
+<body>
+    <div class="dashboard container m-auto">
+        <h4>Welcome to the Student Dashboard</h4>
+        <h6>You can apply for the admission test by navigating to the "Application" page on the navigationbar or click <a href="/application">here</a>.</h6>
+        <strong>Please note, you can apply only if the test requirements are fulfilled. (eg: GPA)</strong>
+        <br>
+        <h6>If you have already applied, you will have access to the "Exam" page exactly at the starting time of the exam</h6>
+        <br>
+        <h6>To check exam details, navigate to the <a href="/exam-info">Exam Details</a> Page.</h6>    
+    </div>
+    
+<% } else{ %>
+<!-- If the user is an admin -->
+<%- include('./partials/navbar-admin.ejs') %>
+<title>Dashboard</title>
+</head>
+<body>
+    <div class="dashboard container m-auto">
+        <h4>Welcome to the Admin Dashboard</h4>
+        <h6>You can assign exams and examiners by navigating to the "Exam Settings" page on the navigationbar or click <a href="/exam-settings">here</a>.</h6>
+        <h6>You can also generate and then publish the result after the exam ends by navigating to the "Result Generation" page on the navigationbar or click <a href="/result">here</a>.</h6>
+    </div>
+<% } %>  
+<!-- The footer will be render regardless of user-type -->
+<%- include('./partials/footer.ejs') %>
