@@ -33,9 +33,10 @@ const loadExam = (req, res) => {
         })
       } else if (exam.status === "unavailable") {
         res.render("confirmStart", {
-          message: exam.schedule.toLocaleString("en-AU", {
-            dateStyle: "long",
-            timeStyle: "long",
+          message: exam.schedule.toLocaleString("en-US", {
+            timeZone: "Asia/Dhaka",
+            dateStyle: "full",
+            timeStyle: "full",
           }),
         })
       } else {
@@ -55,9 +56,6 @@ const startExam = (req, res) => {
       submission
         .save()
         .then(() => {
-          //start timer
-          //schedule exam end redirect
-
           res.redirect("/exam")
         })
         .catch((err) => {

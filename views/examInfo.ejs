@@ -18,7 +18,13 @@
                   <tr>
                     <th scope="row"><%= i++ %></th>
                     <td><%= details.name %></td>
-                    <td><%= details.schedule %></td>
+                    <td><%= new Date(details.schedule).toLocaleString("en-US",
+                      {
+                        timeZone: "Asia/Dhaka",
+                        dateStyle: "full",
+                        timeStyle: "full",
+                      }
+                    ) %></td>
                     <td><%= details.durationInMinute %></td>
                   </tr>  
             </tbody>

@@ -27,16 +27,27 @@
       <div class="result m-2 p-2" style="text-align: center; background-color: coral;;">
         <h4>No exams posted yet.</h4>
     </div>
+    <% } else if(questions == "none") {%>
+      <div class="result m-2 p-2" style="text-align: center; background-color: rgb(255, 246, 126);">
+        <h3>The questions have been set for the exam</h3>
+    </div>
     <% } else if(questions != null){ %>
+      <% let qNo = 1 %>
+
       <div class="questions-added">
         <div class="row m-auto" style="background-color: darkcyan;">
             <div class="col-10"><h3>Set up questions for the exam:</h3></div>
-            <div class="col-2 p-1"><a href="/exam-question/finish"><button class="btn btn-danger" >Finish Setting  Questions</button></a></div>
+            <% if(questions.length > 0){ %>
+              <div class="col-2 p-1"><a href="/exam-question/finish"><button class="btn btn-danger" >Finish Setting  Questions</button></a></div>
+
+            <% } %>
         </div>
         <div class="row m-auto">
           <div class="col-8">
             <h5>Questions Added:</h5>
             <% if(questions.length > 0){ %>
+              <% qNo = questions[questions.length-1].quesNo+1 %>
+
               <table class="table table-info table-bordered m-auto" style="width: fit-content;">
                   <thead>
                     <tr>
@@ -79,7 +90,7 @@
               <h5>Add a question:</h5>
               <form class="form-control" action="/exam-question" method="POST">
                   <label for="quesNo">Question No.:</label>
-                  <input class="form-control" type="number" id="quesNo" name="quesNo" value="<%= questions[questions.length-1].quesNo+1 %>" required readonly>
+                  <input class="form-control" type="number" id="quesNo" name="quesNo" value="<%= qNo %>" required readonly>
                   <label for="questionText">Question Text:</label>
                   <input class="form-control" type="text" id="questionText" name="questionText" required>
                   <label for="option1">Option-1:</label>
@@ -106,11 +117,7 @@
           </div>
         </div>
     </div>
-    <% } else {%>
-      <div class="result m-2 p-2" style="text-align: center; background-color: rgb(255, 246, 126);">
-        <h3>The questions have been set for the exam</h3>
-    </div>
-    <%}%>
+    <% } %>
 </body>
 <%- include('./partials/footer.ejs') %>
 </html>

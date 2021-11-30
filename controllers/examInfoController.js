@@ -18,14 +18,23 @@ const loadExamInfo = (req, res) => {
 
 const setExamInfo = (req, res) => {
   if (req.session.role === "admin") {
-    let endSchedule = new Date(req.body.schedule)
-    let minutes = endSchedule.getMinutes()
+    const startSchedule = new Date(req.body.schedule + "Z")
+
+    let endSchedule = new Date(startSchedule)
+    let minutes = startSchedule.getMinutes()
     const addMinutes = parseInt(req.body.duration)
     minutes = minutes + addMinutes
     endSchedule.setMinutes(minutes)
+
+    let dateOptions = {
+      timeZone: "Asia/Dhaka",
+      dateStyle: "full",
+      timeStyle: "full",
+    }
+
     const examInfo = new ExamInfo({
       name: req.body.name,
-      schedule: req.body.schedule,
+      schedule: startSchedule,
       endSchedule: endSchedule,
       durationInMinute: req.body.duration,
       requirements: { gpa: req.body.gpa },
@@ -37,13 +46,14 @@ const setExamInfo = (req, res) => {
         res.redirect("exam-settings")
       })
       .then(() => {
-        const name = req.body.name
-        const schedule = new Date(req.body.schedule)
-        console.log("Exam start scheduled at", schedule.toString())
-        scheduler.scheduleJob(schedule, () => {
+        console.log(
+          "Exam start scheduled at",
+          startSchedule.toLocaleString("en-US", dateOptions)
+        )
+        scheduler.scheduleJob(startSchedule, () => {
           ExamInfo.updateOne(
             {
-              name: name,
+              name: req.body.name,
             },
             {
               $set: {
@@ -51,17 +61,22 @@ const setExamInfo = (req, res) => {
               },
             }
           ).then(() => {
-            console.log("Exam started at", new Date().toString())
+            console.log(
+              "Exam started at",
+              new Date().toLocaleString("en-US", dateOptions)
+            )
           })
         })
       })
       .then(() => {
-        const name = req.body.name
-        console.log("Exam end scheduled at", endSchedule.toString())
+        console.log(
+          "Exam end scheduled at",
+          endSchedule.toLocaleString("en-US", dateOptions)
+        )
         const job2 = scheduler.scheduleJob(endSchedule, () => {
           ExamInfo.updateOne(
             {
-              name: name,
+              name: req.body.name,
             },
             {
               $set: {
@@ -70,10 +85,16 @@ const setExamInfo = (req, res) => {
             }
           )
             .then(() => {
-              console.log("Exam ended at", new Date().toString())
+              console.log(
+                "Exam ended at",
+                new Date().toLocaleString("en-US", dateOptions)
+              )
             })
             .then(async () => {
-              console.log("Evaluation started at", new Date().toString())
+              console.log(
+                "Evaluation started at",
+                new Date().toLocaleString("en-US", dateOptions)
+              )
               startEvaluation()
             })
         })

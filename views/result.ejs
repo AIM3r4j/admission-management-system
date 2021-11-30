@@ -62,7 +62,11 @@
     </head>
     <body>
         <div class="result">
-            <% if(result == "noExamYet"){ %>
+            <% if(result == "notYet"){ %>
+                <div class="result m-2 p-2" style="text-align: center; background-color: rgb(255, 246, 126);">
+                    <h3>Result is not available yet.</h3>
+                </div>
+            <% } else if(result == "noExamYet"){ %>
                 <div class="result m-2 p-2" style="text-align: center; background-color: rgb(255, 246, 126);">
                     <h3>Exam is not posted yet.</h3>
                 </div>

@@ -55,25 +55,27 @@ const loadResult = (req, res) => {
         Student.findOne({ username: req.session.username })
           .then((student) => {
             if (student.applied == true && student.result == true) {
-              ExamInfo.findOne().then((exam) => {
-                if (new Date() <= exam.admissionDeadline) {
-                  res.render("result", {
-                    role: req.session.role,
-                    result: "published",
-                    passed: student.result,
-                    deadline: exam.admissionDeadline,
-                    timesUp: false,
-                  })
-                } else {
-                  res.render("result", {
-                    role: req.session.role,
-                    result: "published",
-                    passed: student.result,
-                    deadline: exam.admissionDeadline,
-                    timesUp: true,
-                  })
-                }
-              })
+              if (new Date() <= exam.admissionDeadline) {
+                res.render("result", {
+                  role: req.session.role,
+                  result: "published",
+                  passed: student.result,
+                  deadline: exam.admissionDeadline,
+                  timesUp: false,
+                })
+              } else {
+                res.render("result", {
+                  role: req.session.role,
+                  result: "published",
+                  passed: student.result,
+                  deadline: exam.admissionDeadline.toLocaleString("en-US", {
+                    timeZone: "Asia/Dhaka",
+                    dateStyle: "full",
+                    timeStyle: "full",
+                  }),
+                  timesUp: true,
+                })
+              }
             } else if (student.applied == true && student.result == false) {
               res.render("result", {
                 role: req.session.role,
@@ -91,6 +93,12 @@ const loadResult = (req, res) => {
           .catch((err) => {
             console.log(err)
           })
+      } else {
+        res.render("result", {
+          role: req.session.role,
+          result: "notYet",
+          passed: null,
+        })
       }
     })
   }

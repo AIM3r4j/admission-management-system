@@ -31,7 +31,13 @@
               <tr>
                 <th scope="row">1</th>
                 <td><%= examInfo.name %></td>
-                <td><%= examInfo.schedule %></td>
+                <td><%= new Date(examInfo.schedule).toLocaleString("en-US",
+                  {
+                    timeZone: "Asia/Dhaka",
+                    dateStyle: "full",
+                    timeStyle: "full",
+                  }
+                ) %></td>
                 <td><%= examInfo.durationInMinute %></td>
                 <td><%= examInfo.requirements.gpa %></td>
                 <td><a href="/exam-info/delete/<%= examInfo._id %>"><i class="bi bi-trash-fill"></i></a></td>
@@ -45,7 +51,7 @@
         <h5>Please assign an exam:</h5>
         <form class="form-control" action="/exam-info" method="post" style="background-color: lightblue;">
             <input class="form-control mb-3" type="text" id="name" placeholder="Exam Name" name="name" required>
-            <label for="schedule">Exam Date and Time</label>
+            <label for="schedule">Please enter the time and date in UTC time</label>
             <input class="form-control mb-3" type="datetime-local" id="schedule" placeholder="Exam Schedule" name="schedule" required>
             <input class="form-control mb-3" type="number" id="duration" placeholder="Exam Duration (Minute)" name="duration" required>
             <input class="form-control mb-3" type="number" id="gpa" placeholder="Required GPA" name="gpa" min="1"

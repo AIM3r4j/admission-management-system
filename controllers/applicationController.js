@@ -15,7 +15,11 @@ const checkEligibility = (req, res) => {
               res.render("application", {
                 feedback: "applicable",
                 username: username,
-                deadline: info.schedule,
+                deadline: info.schedule.toLocaleString("en-US", {
+                  timeZone: "Asia/Dhaka",
+                  dateStyle: "full",
+                  timeStyle: "full",
+                }),
                 requirements: minGPA,
               })
             } else {
