@@ -9,43 +9,25 @@ const loadSignupForm = (req, res) => {
     res.render("signup", { message: req.flash("message") })
   }
 }
-const signupUser = (req, res) => {
+const signupUser = async (req, res) => {
   const { name, email, username, gpa, password, confirm_password } = req.body
   if (password === confirm_password) {
-    bcrypt
-      .hash(password, 10)
-      .then((hashed) => {
-        const cred = new Credential({
-          username: username,
-          email: email,
-          password: hashed,
-        })
-        const student = new Student({
-          username: username,
-          name: name,
-          email: email,
-          gpa: gpa,
-        })
-        cred
-          .save()
-          .then(() => {
-            student.save()
-          })
-          .then(() => {
-            req.flash("message", ["success", "Signup Successful"])
-            res.redirect("login")
-          })
-          .catch((err) => {
-            console.log(err)
-            req.flash("message", ["error", err])
-            res.render("signup", { message: req.flash("message") })
-          })
-      })
-      .catch((err) => {
-        console.log(err)
-        req.flash("message", ["error", err])
-        res.render("signup", { message: req.flash("message") })
-      })
+    const hashed = await bcrypt.hash(password, 10)
+    const cred = new Credential({
+      username: username,
+      email: email,
+      password: hashed,
+    })
+    const student = new Student({
+      username: username,
+      name: name,
+      email: email,
+      gpa: gpa,
+    })
+    await cred.save()
+    await student.save()
+    req.flash("message", ["success", "Signup Successful"])
+    res.redirect("login")
   } else {
     req.flash("message", ["error", "Password Mismatch"])
     res.render("signup", { message: req.flash("message") })

@@ -2,21 +2,16 @@ const scheduler = require("node-schedule")
 const startEvaluation = require("../lib/evaluation")
 const ExamInfo = require("../models/examInfo")
 
-const loadExamInfo = (req, res) => {
+const loadExamInfo = async (req, res) => {
   if (req.session.role === "student") {
-    ExamInfo.findOne()
-      .then((result) => {
-        res.render("examInfo", { details: result })
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    const info = await ExamInfo.findOne()
+    res.render("examInfo", { details: info })
   } else {
     res.redirect("/")
   }
 }
 
-const setExamInfo = (req, res) => {
+const setExamInfo = async (req, res) => {
   if (req.session.role === "admin") {
     const startSchedule = new Date(req.body.schedule + "Z")
 
@@ -39,69 +34,54 @@ const setExamInfo = (req, res) => {
       durationInMinute: req.body.duration,
       requirements: { gpa: req.body.gpa },
     })
-    examInfo
-      .save()
-      .then(() => {
-        req.flash("success", "Exam details saved!")
-        res.redirect("exam-settings")
-      })
-      .then(() => {
-        console.log(
-          "Exam start scheduled at",
-          startSchedule.toLocaleString("en-US", dateOptions)
-        )
-        scheduler.scheduleJob(startSchedule, () => {
-          ExamInfo.updateOne(
-            {
-              name: req.body.name,
-            },
-            {
-              $set: {
-                status: "started",
-              },
-            }
-          ).then(() => {
-            console.log(
-              "Exam started at",
-              new Date().toLocaleString("en-US", dateOptions)
-            )
-          })
-        })
-      })
-      .then(() => {
-        console.log(
-          "Exam end scheduled at",
-          endSchedule.toLocaleString("en-US", dateOptions)
-        )
-        const job2 = scheduler.scheduleJob(endSchedule, () => {
-          ExamInfo.updateOne(
-            {
-              name: req.body.name,
-            },
-            {
-              $set: {
-                status: "ended",
-              },
-            }
-          )
-            .then(() => {
-              console.log(
-                "Exam ended at",
-                new Date().toLocaleString("en-US", dateOptions)
-              )
-            })
-            .then(async () => {
-              console.log(
-                "Evaluation started at",
-                new Date().toLocaleString("en-US", dateOptions)
-              )
-              startEvaluation()
-            })
-        })
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    await examInfo.save()
+    req.flash("success", "Exam details saved!")
+    res.redirect("exam-settings")
+    console.log(
+      "Exam start scheduled at",
+      startSchedule.toLocaleString("en-US", dateOptions)
+    )
+    scheduler.scheduleJob(startSchedule, async () => {
+      await ExamInfo.updateOne(
+        {
+          name: req.body.name,
+        },
+        {
+          $set: {
+            status: "started",
+          },
+        }
+      )
+      console.log(
+        "Exam started at",
+        new Date().toLocaleString("en-US", dateOptions)
+      )
+    })
+    console.log(
+      "Exam end scheduled at",
+      endSchedule.toLocaleString("en-US", dateOptions)
+    )
+    scheduler.scheduleJob(endSchedule, async () => {
+      await ExamInfo.updateOne(
+        {
+          name: req.body.name,
+        },
+        {
+          $set: {
+            status: "ended",
+          },
+        }
+      )
+      console.log(
+        "Exam ended at",
+        new Date().toLocaleString("en-US", dateOptions)
+      )
+      console.log(
+        "Evaluation started at",
+        new Date().toLocaleString("en-US", dateOptions)
+      )
+      startEvaluation()
+    })
   } else {
     res.redirect("/")
   }
@@ -117,7 +97,7 @@ const deleteExamInfo = (req, res) => {
         res.redirect("/exam-settings")
       })
       .catch((err) => {
-        console.log(err)
+        console.error(err)
       })
   } else {
     res.redirect("/")

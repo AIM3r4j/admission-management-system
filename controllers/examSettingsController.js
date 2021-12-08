@@ -3,27 +3,24 @@ const bcrypt = require("bcrypt")
 const Credential = require("../models/credential")
 const ExamInfo = require("../models/examInfo")
 
-const getExamSettings = (req, res) => {
+const getExamSettings = async (req, res) => {
   if (req.session.role === "admin") {
-    ExamInfo.findOne().then((examinfo) => {
-      if (examinfo == {}) {
-        Credential.find({ role: "examiner" }).then((examiners) => {
-          res.render("examSettings", {
-            examInfo: null,
-            examiners: examiners,
-            feedback: req.flash("success"),
-          })
-        })
-      } else {
-        Credential.find({ role: "examiner" }).then((examiners) => {
-          res.render("examSettings", {
-            examInfo: examinfo,
-            examiners: examiners,
-            feedback: req.flash("success"),
-          })
-        })
-      }
-    })
+    const examinfo = await ExamInfo.findOne()
+    if (examinfo == {}) {
+      const examiners = await Credential.find({ role: "examiner" })
+      res.render("examSettings", {
+        examInfo: null,
+        examiners: examiners,
+        feedback: req.flash("success"),
+      })
+    } else {
+      const examiners = await Credential.find({ role: "examiner" })
+      res.render("examSettings", {
+        examInfo: examinfo,
+        examiners: examiners,
+        feedback: req.flash("success"),
+      })
+    }
   } else {
     res.redirect("/")
   }
@@ -39,32 +36,21 @@ const assignExaminer = async (req, res) => {
       password: hashed,
       role: "examiner",
     })
-    examiner
-      .save()
-      .then(() => {
-        req.flash("success", "Examiner Assigned Successfully!")
-        res.redirect("/exam-settings")
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    await examiner.save()
+    req.flash("success", "Examiner Assigned Successfully!")
+    res.redirect("/exam-settings")
   } else {
     res.redirect("/")
   }
 }
 
-const deleteExaminer = (req, res) => {
+const deleteExaminer = async (req, res) => {
   if (req.session.role === "admin") {
-    Credential.deleteOne({
+    await Credential.deleteOne({
       username: req.params.username,
     })
-      .then((result) => {
-        req.flash("message", "Examiner removed successfully")
-        res.redirect("/exam-settings")
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    req.flash("message", "Examiner removed successfully")
+    res.redirect("/exam-settings")
   } else {
     res.redirect("/")
   }

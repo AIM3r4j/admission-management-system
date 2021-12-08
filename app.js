@@ -32,7 +32,7 @@ mongoose
       console.log(`Server is listening to port ${port}\n`)
     })
   })
-  .catch((err) => console.log(err))
+  .catch((err) => console.error(err))
 
 app.set("view engine", "ejs")
 

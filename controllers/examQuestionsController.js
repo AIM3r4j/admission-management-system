@@ -1,34 +1,32 @@
 const Question = require("../models/question")
 const ExamInfo = require("../models/examInfo")
 
-const getQuestionsForm = (req, res) => {
+const getQuestionsForm = async (req, res) => {
   if (req.session.role === "examiner") {
-    ExamInfo.findOne().then((exam) => {
-      if (exam != null && exam.questionsSet === false) {
-        Question.find().then((questions) => {
-          res.render("examQuestions", {
-            questions: questions,
-            message: req.flash("message"),
-          })
-        })
-      } else if (exam != null && exam.questionsSet === true) {
-        res.render("examQuestions", {
-          questions: "none",
-          message: req.flash("message"),
-        })
-      } else {
-        res.render("examQuestions", {
-          questions: null,
-          message: req.flash("message"),
-        })
-      }
-    })
+    const exam = await ExamInfo.findOne()
+    if (exam != null && exam.questionsSet === false) {
+      const questions = await Question.find()
+      res.render("examQuestions", {
+        questions: questions,
+        message: req.flash("message"),
+      })
+    } else if (exam != null && exam.questionsSet === true) {
+      res.render("examQuestions", {
+        questions: "none",
+        message: req.flash("message"),
+      })
+    } else {
+      res.render("examQuestions", {
+        questions: null,
+        message: req.flash("message"),
+      })
+    }
   } else {
     res.redirect("/")
   }
 }
 
-const setQuestions = (req, res) => {
+const setQuestions = async (req, res) => {
   if (req.session.role === "examiner") {
     const correctOption = req.body.correctOption
     if (correctOption == "1") {
@@ -50,79 +48,52 @@ const setQuestions = (req, res) => {
       correctAnswer: correctAnswer,
       mark: req.body.mark,
     })
-    question
-      .save()
-      .then((result) => {
-        if (result) {
-          req.flash("message", "Question added successfully")
-          res.redirect("exam-question")
-        }
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    await question.save()
+    req.flash("message", "Question added successfully")
+    res.redirect("exam-question")
   } else {
     res.redirect("/")
   }
 }
 
-const finishQuestionSetting = (req, res) => {
+const finishQuestionSetting = async (req, res) => {
   if (req.session.role === "examiner") {
     let exam
-    ExamInfo.findOne()
-      .then((result) => {
-        exam = result
-        ExamInfo.updateOne(
-          { _id: exam._id },
-          {
-            $set: {
-              questionsSet: true,
-            },
-          }
-        ).then(() => {
-          res.redirect("/exam-question")
-          let total = 0
-          Question.find()
-            .then((questions) => {
-              questions.forEach((question) => {
-                total += parseInt(question.mark)
-              })
-            })
-            .then(() => {
-              ExamInfo.updateOne(
-                { _id: exam._id },
-                {
-                  $set: {
-                    totalMarks: total,
-                  },
-                }
-              ).catch((err) => {
-                console.log(err)
-              })
-            })
-        })
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    const info = await ExamInfo.findOne()
+    exam = info
+    await ExamInfo.updateOne(
+      { _id: exam._id },
+      {
+        $set: {
+          questionsSet: true,
+        },
+      }
+    )
+    res.redirect("/exam-question")
+    let total = 0
+    const questions = await Question.find()
+    questions.forEach((question) => {
+      total += parseInt(question.mark)
+    })
+    await ExamInfo.updateOne(
+      { _id: exam._id },
+      {
+        $set: {
+          totalMarks: total,
+        },
+      }
+    )
   } else {
     res.redirect("/")
   }
 }
 
-const deleteQuestion = (req, res) => {
+const deleteQuestion = async (req, res) => {
   if (req.session.role === "examiner") {
     const quesNo = parseInt(req.params.quesNo)
-    Question.deleteOne({ quesNo: quesNo })
-      .then((result) => {
-        if (result) {
-          req.flash("message", "Question deleted successfully")
-          res.redirect("/exam-question")
-        }
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    await Question.deleteOne({ quesNo: quesNo })
+    req.flash("message", "Question deleted successfully")
+    res.redirect("/exam-question")
   } else {
     res.redirect("/")
   }

@@ -4,63 +4,54 @@ const Question = require("../models/question")
 const ExamInfo = require("../models/examInfo")
 const Submission = require("../models/submission")
 
-const loadExam = (req, res) => {
+const loadExam = async (req, res) => {
   if (req.session.role === "student") {
-    ExamInfo.findOne().then((exam) => {
-      if (exam == null) {
+    const exam = await ExamInfo.findOne()
+    if (exam == null) {
+      res.render("exam", {
+        questions: "noExamYet",
+        message: req.flash("message"),
+      })
+    } else if (exam.status === "started") {
+      const submission = await Submission.findOne({
+        username: req.session.username,
+      })
+      if (submission != null && submission.examStarted === true) {
+        const questions = await Question.find()
         res.render("exam", {
-          questions: "noExamYet",
+          questions: questions,
           message: req.flash("message"),
         })
-      } else if (exam.status === "started") {
-        Submission.findOne({
-          username: req.session.username,
-        }).then((submission) => {
-          if (submission != null && submission.examStarted === true) {
-            Question.find().then((questions) => {
-              res.render("exam", {
-                questions: questions,
-                message: req.flash("message"),
-              })
-            })
-          } else if (submission != null && submission.examEnded === true) {
-            res.render("examEnded")
-          } else {
-            res.render("confirmStart", {
-              message: null,
-            })
-          }
-        })
-      } else if (exam.status === "unavailable") {
-        res.render("confirmStart", {
-          message: exam.schedule.toLocaleString("en-US", {
-            timeZone: "Asia/Dhaka",
-            dateStyle: "full",
-            timeStyle: "full",
-          }),
-        })
-      } else {
+      } else if (submission != null && submission.examEnded === true) {
         res.render("examEnded")
+      } else {
+        res.render("confirmStart", {
+          message: null,
+        })
       }
-    })
+    } else if (exam.status === "unavailable") {
+      res.render("confirmStart", {
+        message: exam.schedule.toLocaleString("en-US", {
+          timeZone: "Asia/Dhaka",
+          dateStyle: "full",
+          timeStyle: "full",
+        }),
+      })
+    } else {
+      res.render("examEnded")
+    }
   }
 }
 
-const startExam = (req, res) => {
+const startExam = async (req, res) => {
   if (req.session.role === "student") {
     if (req.body.startConfirmed === "yes") {
       const submission = new Submission({
         username: req.session.username,
         examStarted: true,
       })
-      submission
-        .save()
-        .then(() => {
-          res.redirect("/exam")
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      await submission.save()
+      res.redirect("/exam")
     } else {
       res.redirect("/")
     }
@@ -75,10 +66,10 @@ const confirmEnd = (req, res) => {
   }
 }
 
-const endExam = (req, res) => {
+const endExam = async (req, res) => {
   if (req.session.role === "student") {
     if (req.body.endConfirmed === "yes") {
-      Submission.updateOne(
+      await Submission.updateOne(
         { username: req.session.username },
         {
           $set: {
@@ -87,12 +78,7 @@ const endExam = (req, res) => {
           },
         }
       )
-        .then(() => {
-          res.redirect("/exam")
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      res.redirect("/exam")
     } else {
       res.redirect("/exam")
     }
@@ -101,11 +87,11 @@ const endExam = (req, res) => {
   }
 }
 
-const submitAnswer = (req, res) => {
+const submitAnswer = async (req, res) => {
   if (req.session.role === "student") {
     const key = Object.keys(req.body)[0]
     const value = Object.values(req.body)[0]
-    Submission.updateOne(
+    await Submission.updateOne(
       { username: req.session.username },
       {
         $set: {
@@ -113,15 +99,8 @@ const submitAnswer = (req, res) => {
         },
       }
     )
-      .then(() => {
-        req.flash("message", "Answer submitted")
-        res.redirect("/exam")
-      })
-      .catch((err) => {
-        console.log(err)
-        req.flash("message", err)
-        res.redirect("/exam")
-      })
+    req.flash("message", "Answer submitted")
+    res.redirect("/exam")
   }
 }
 
