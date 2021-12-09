@@ -1,5 +1,5 @@
 const router = require("express").Router()
-const examQuestionsController = require("../controllers/examQuestionsController")
+const examQuestionsController = require("../MVC Structure/controllers/examQuestionsController")
 
 router.get("", examQuestionsController.getQuestionsForm)
 router.post("", examQuestionsController.setQuestions)

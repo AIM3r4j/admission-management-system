@@ -1,5 +1,5 @@
 const router = require("express").Router()
-const examSettingsController = require("../controllers/examSettingsController")
+const examSettingsController = require("../MVC Structure/controllers/examSettingsController")
 
 router.get("", examSettingsController.getExamSettings)
 router.post("", examSettingsController.assignExaminer)

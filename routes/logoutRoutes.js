@@ -1,5 +1,5 @@
 const router = require("express").Router()
-const logoutController = require("../controllers/logoutController")
+const logoutController = require("../MVC Structure/controllers/logoutController")
 
 router.post("", logoutController.logoutUser)
 

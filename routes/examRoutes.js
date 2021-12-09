@@ -1,5 +1,5 @@
 const router = require("express").Router()
-const examController = require("../controllers/examController")
+const examController = require("../MVC Structure/controllers/examController")
 
 router.get("", examController.loadExam)
 router.get("/end", examController.confirmEnd)

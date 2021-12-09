@@ -1,5 +1,5 @@
 const scheduler = require("node-schedule")
-const startEvaluation = require("../lib/evaluation")
+const startEvaluation = require("../../lib/evaluation")
 const ExamInfo = require("../models/examInfo")
 
 const loadExamInfo = async (req, res) => {

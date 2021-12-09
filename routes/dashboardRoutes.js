@@ -1,5 +1,5 @@
 const router = require("express").Router()
-const dashboardController = require("../controllers/dashboardController")
+const dashboardController = require("../MVC Structure/controllers/dashboardController")
 
 router.get("", dashboardController.loadDashboard)
 
