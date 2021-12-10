@@ -46,15 +46,19 @@ const checkEligibility = async (req, res) => {
 
 const registerApplication = async (req, res) => {
   try {
-    await Student.updateOne(
-      { username: req.session.username },
-      {
-        $set: {
-          applied: true,
-        },
-      }
-    )
-    res.redirect("/application")
+    if (req.session.role === "student") {
+      await Student.updateOne(
+        { username: req.session.username },
+        {
+          $set: {
+            applied: true,
+          },
+        }
+      )
+      res.redirect("/application")
+    } else {
+      res.redirect("/")
+    }
   } catch (error) {
     console.log(error)
     return error
