@@ -34,6 +34,8 @@ mongoose
   })
   .catch((err) => console.error(err))
 
+app.set("views", "MVC Structure/views")
+
 app.set("view engine", "ejs")
 
 app.use(express.static("public"))
